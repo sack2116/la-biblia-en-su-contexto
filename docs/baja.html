@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Darse de baja · La Biblia en su Contexto</title>
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="status-page"><div class="status-card">
+  <img src="logo.png" alt="">
+  <h1 id="title">Un momento…</h1>
+  <p id="text"></p>
+  <p id="actions" hidden><button class="btn" id="go" type="button">Sí, darme de baja</button></p>
+  <p style="margin-top:24px"><a href="./">Volver al inicio</a></p>
+</div></main>
+<script src="config.js"></script>
+<script>
+const set = (t, p) => { document.getElementById('title').textContent = t; document.getElementById('text').innerHTML = p; };
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const token = new URLSearchParams(location.search).get('t') || '';
+const call = (commit) => fetch(window.LBESC_API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'unsubscribe', token, commit }) }).then((r) => r.json());
+
+(async () => {
+  if (!token) return set('Enlace no válido', 'Abre el enlace "Darme de baja" que aparece en nuestros correos.');
+  try {
+    const d = await call(false);
+    if (!d.ok) return set('Enlace no válido', esc(d.error || 'No encontramos esta suscripción.'));
+    if (d.status === 'unsubscribed') return set('Ya estás dado(a) de baja', 'No recibirás más correos del boletín.');
+    set('¿Darte de baja?', `Dejarás de recibir los correos en <strong>${esc(d.email)}</strong>.`);
+    document.getElementById('actions').hidden = false;
+  } catch { set('Sin conexión', 'Inténtalo de nuevo en un momento.'); }
+})();
+
+document.getElementById('go').addEventListener('click', async (e) => {
+  e.target.disabled = true; e.target.textContent = 'Procesando…';
+  try {
+    const d = await call(true);
+    if (!d.ok) throw new Error(d.error);
+    document.getElementById('actions').hidden = true;
+    set('Te diste de baja', 'Ya no recibirás más correos del boletín. ¡Gracias por haber sido parte!');
+  } catch { e.target.disabled = false; e.target.textContent = 'Sí, darme de baja'; set('No se pudo completar', 'Inténtalo de nuevo en un momento.'); }
+});
+</script>
+</body>
+</html>

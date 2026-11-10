@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Biblia en su Contexto · Boletín</title>
+<meta name="description" content="Recibe estudios bíblicos con contexto histórico, cultural y lingüístico directamente en tu correo. Con Isaac Dominguez.">
+<meta property="og:title" content="La Biblia en su Contexto · Boletín">
+<meta property="og:description" content="El sentido de la Escritura, directo en tu correo.">
+<meta property="og:image" content="https://sack2116.github.io/la-biblia-en-su-contexto/banner.jpg">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@1,500&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <nav class="topbar">
+      <a class="brand" href="#"><img src="logo.png" alt=""><span>La Biblia en su Contexto</span></a>
+      <a class="yt-link" href="https://www.youtube.com/@labibliaensucontexto401" target="_blank" rel="noopener">▶ Ver el canal</a>
+    </nav>
+
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">Boletín gratuito</span>
+        <h1>La Biblia<small>en su Contexto</small></h1>
+        <div class="divider">✦</div>
+        <p class="lead">El sentido de la Escritura, directo en tu correo.</p>
+        <p class="sub">Estudios bíblicos con trasfondo histórico, cultural y de los idiomas originales, para que leas cada pasaje como lo entendieron sus primeros oyentes. Con Isaac Dominguez.</p>
+        <ul class="pills">
+          <li>Contexto</li><li>Exégesis</li><li>Interpretación fiel</li>
+        </ul>
+      </div>
+
+      <div class="signup" id="suscribirse">
+        <div id="form-view">
+          <h2>Únete al boletín</h2>
+          <p class="hint">Nuevos estudios, episodios y recursos. Sin spam: te das de baja con un clic.</p>
+          <form id="signup-form" novalidate>
+            <div class="field">
+              <label for="name">Nombre</label>
+              <input id="name" name="name" type="text" autocomplete="given-name" maxlength="80" placeholder="Tu nombre">
+            </div>
+            <div class="field">
+              <label for="email">Correo electrónico</label>
+              <input id="email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="tucorreo@ejemplo.com">
+            </div>
+            <div class="field">
+              <label for="interest">¿Qué te interesa más?</label>
+              <select id="interest" name="interest">
+                <option value="todo">Un poco de todo</option>
+                <option value="historia">Contexto histórico y cultural</option>
+                <option value="idiomas">Hebreo y griego bíblico</option>
+                <option value="aplicacion">Aplicación a la vida cristiana</option>
+                <option value="familia">Matrimonio y familia</option>
+              </select>
+            </div>
+            <div class="hp" aria-hidden="true">
+              <label for="website">No llenar</label>
+              <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+            <label class="check">
+              <input type="checkbox" id="consent" name="consent" required>
+              <span>Acepto recibir correos de La Biblia en su Contexto. Puedo darme de baja en cualquier momento.</span>
+            </label>
+            <button class="btn" type="submit" id="submit-btn">Quiero suscribirme</button>
+            <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <div class="success" id="success-view" hidden>
+          <div class="seal">✉</div>
+          <h2>¡Revisa tu correo!</h2>
+          <p id="success-text">Te enviamos un enlace para confirmar tu suscripción.</p>
+          <p class="privacy">¿No lo ves? Busca en Spam o Promociones.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="features">
+    <div class="wrap">
+      <div class="section-title">
+        <h2>Lo que recibirás</h2>
+        <p>Cada correo te ayuda a leer la Biblia con los ojos de su tiempo y aplicarla con fidelidad al nuestro.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10M19 21V10M9 21V10M15 21V10M2 10l10-6 10 6"/></svg></div>
+          <h3>Contexto</h3>
+          <p>Historia, costumbres y geografía del mundo bíblico que cambian cómo entiendes un pasaje.</p>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg></div>
+          <h3>Exégesis</h3>
+          <p>Palabras clave en hebreo y griego explicadas de forma clara, sin necesidad de ser experto.</p>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M12 7v6M9 10h6"/></svg></div>
+          <h3>Interpretación fiel</h3>
+          <p>Aplicaciones prácticas que respetan lo que el texto realmente dice.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-title">
+        <h2>Tus primeros días</h2>
+        <p>Al confirmar tu suscripción empieza una breve serie de bienvenida.</p>
+      </div>
+      <ol class="timeline">
+        <li><div class="when">Hoy</div><div><strong>Bienvenida</strong><span>Qué esperar del boletín y por dónde empezar en el canal.</span></div></li>
+        <li><div class="when">Día 3</div><div><strong>El Padre que corrió</strong><span>Un detalle cultural de Lucas 15 que transforma la parábola del hijo pródigo.</span></div></li>
+        <li><div class="when">Día 7</div><div><strong>Tu pregunta</strong><span>Cuéntanos qué pasaje quieres ver explicado en un próximo episodio.</span></div></li>
+        <li><div class="when">Después</div><div><strong>Nuevos estudios</strong><span>Episodios, curiosidades bíblicas y recursos a medida que se publican.</span></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="verse">
+    <div class="wrap">
+      <blockquote>“Escudriñad las Escrituras; porque a vosotros os parece que en ellas tenéis la vida eterna; y ellas son las que dan testimonio de mí.”</blockquote>
+      <cite>Juan 5:39</cite>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap about-grid">
+      <img src="logo.png" alt="Isaac Dominguez leyendo la Biblia">
+      <div>
+        <h2>Isaac Dominguez</h2>
+        <p class="role">Estudios bíblicos y exégesis</p>
+        <p>En <em>La Biblia en su Contexto</em> estudiamos las Escrituras en su marco histórico, cultural y literario para descubrir el sentido que el autor quiso comunicar.</p>
+        <p>El boletín es la forma más directa de recibir cada nuevo estudio y de enviar tus preguntas.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-final">
+    <div class="wrap">
+      <h2>Lee la Biblia como fue escrita</h2>
+      <p>Únete gratis y recibe el próximo estudio en tu correo.</p>
+      <a class="btn" href="#suscribirse" id="cta-bottom">Suscribirme al boletín</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year"></span> La Biblia en su Contexto · Con Isaac Dominguez</span>
+    <a href="https://www.youtube.com/@labibliaensucontexto401" target="_blank" rel="noopener">YouTube</a>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+document.getElementById('cta-bottom').addEventListener('click', () => {
+  setTimeout(() => document.getElementById('email').focus({ preventScroll: true }), 450);
+});
+
+const form = document.getElementById('signup-form');
+const msg = document.getElementById('form-msg');
+const btn = document.getElementById('submit-btn');
+
+function showError(text, field) {
+  msg.textContent = text;
+  msg.className = 'form-msg err';
+  if (field) field.focus();
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = form.email.value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return showError('Escribe un correo electrónico válido.', form.email);
+  if (!form.consent.checked) return showError('Marca la casilla para aceptar recibir correos.', form.consent);
+
+  btn.disabled = true;
+  btn.textContent = 'Enviando…';
+  msg.textContent = '';
+  try {
+    const res = await fetch(window.LBESC_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'subscribe',
+        name: form.name.value.trim(),
+        email,
+        interest: form.interest.value,
+        consent: true,
+        website: form.website.value
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.error || 'No se pudo completar la suscripción.');
+    if (data.message) document.getElementById('success-text').textContent = data.message;
+    document.getElementById('form-view').hidden = true;
+    document.getElementById('success-view').hidden = false;
+  } catch (err) {
+    showError(err.message === 'Failed to fetch' ? 'Sin conexión. Inténtalo de nuevo.' : err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Quiero suscribirme';
+  }
+});
+</script>
+</body>
+</html>

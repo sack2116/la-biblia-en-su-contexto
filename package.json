@@ -1,0 +1,11 @@
+{
+  "name": "lbesc-newsletter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing page (GitHub Pages) + boletín automático (Google Apps Script)",
+  "type": "module",
+  "scripts": {},
+  "devDependencies": {
+    "@google/clasp": "^3.4.1"
+  }
+}

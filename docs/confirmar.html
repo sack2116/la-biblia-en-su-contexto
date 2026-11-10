@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Confirmar suscripción · La Biblia en su Contexto</title>
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="status-page"><div class="status-card">
+  <img src="logo.png" alt="">
+  <h1 id="title">Confirmando…</h1>
+  <p id="text">Un momento, por favor.</p>
+  <p id="cta" hidden><a class="btn" href="https://www.youtube.com/@labibliaensucontexto401" target="_blank" rel="noopener">Ver el canal en YouTube</a></p>
+  <p style="margin-top:24px"><a href="./">Volver al inicio</a></p>
+</div></main>
+<script src="config.js"></script>
+<script>
+(async () => {
+  const set = (t, p) => { document.getElementById('title').textContent = t; document.getElementById('text').innerHTML = p; };
+  const token = new URLSearchParams(location.search).get('t') || '';
+  if (!token) return set('Enlace no válido', 'Abre el enlace que te enviamos por correo.');
+  try {
+    const res = await fetch(window.LBESC_API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'confirm', token }) });
+    const d = await res.json();
+    if (!d.ok) return set('Enlace no válido', d.error || 'Este enlace no es válido o ya expiró.');
+    if (d.status === 'unsubscribed') return set('Suscripción cancelada', 'Te diste de baja de este boletín. Puedes volver a suscribirte desde la <a href="./">página principal</a>.');
+    set('¡Suscripción confirmada!', 'Bienvenido(a) a <em>La Biblia en su Contexto</em>. Ya te enviamos el primer correo.');
+    document.getElementById('cta').hidden = false;
+  } catch {
+    set('Sin conexión', 'No pudimos confirmar ahora. Vuelve a abrir el enlace del correo en un momento.');
+  }
+})();
+</script>
+</body>
+</html>
