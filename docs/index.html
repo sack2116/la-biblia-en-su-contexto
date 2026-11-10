@@ -37,8 +37,8 @@
 
       <div class="signup" id="suscribirse">
         <div id="form-view">
-          <h2>Recibe 2 regalos gratis</h2>
-          <p class="hint">Suscríbete al boletín y descarga el <b>glosario de 10 palabras hebreas y griegas</b> y la <b>guía de estudio de El Matrimonio en su Contexto</b>. Sin spam: te das de baja con un clic.</p>
+          <h2 id="form-title">Recibe 2 regalos gratis</h2>
+          <p class="hint" id="form-hint">Recibe hoy el <b>glosario de 10 palabras hebreas y griegas</b> y, en tu primera semana, la <b>guía de estudio de El Matrimonio en su Contexto</b>. Sin spam: te das de baja con un clic.</p>
           <form id="signup-form" novalidate>
             <div class="field">
               <label for="name">Nombre</label>
@@ -75,7 +75,7 @@
           <div class="seal">✉</div>
           <h2>¡Revisa tu correo!</h2>
           <p id="success-text">Te enviamos un enlace para confirmar tu suscripción.</p>
-          <p>Al confirmar, podrás descargar tus 2 regalos.</p>
+          <p id="success-gift">Al confirmar, podrás descargar tu primer regalo.</p>
           <p class="privacy">¿No lo ves? Busca en Spam o Promociones.</p>
         </div>
       </div>
@@ -89,13 +89,13 @@
       <div class="section-title">
         <span class="eyebrow">Gratis al suscribirte</span>
         <h2>Tus regalos de bienvenida</h2>
-        <p>Dos recursos en PDF para estudiar, imprimir o compartir con tu grupo.</p>
+        <p>Dos recursos en PDF para estudiar, imprimir o compartir con tu grupo. Uno hoy y otro en tu primera semana, para que tengas tiempo de disfrutar cada uno.</p>
       </div>
       <div class="gift-grid">
         <article class="gift">
           <img src="recursos/portada_glosario.jpg" alt="Portada del glosario de 10 palabras hebreas y griegas" loading="lazy">
           <div>
-            <span class="tag">Glosario · 1 página</span>
+            <span class="tag">Hoy · Glosario · 1 página</span>
             <h3>10 palabras hebreas y griegas que todo creyente debe conocer</h3>
             <p>Jésed, shalóm, agápe, metánoia y más: su sentido original, cómo se pronuncian y dónde leerlas.</p>
           </div>
@@ -103,7 +103,7 @@
         <article class="gift">
           <img src="recursos/portada_guia.jpg" alt="Portada de la guía de estudio El Matrimonio en su Contexto" loading="lazy">
           <div>
-            <span class="tag">Guía de estudio · 8 páginas</span>
+            <span class="tag">Día 7 · Guía de estudio · 8 páginas</span>
             <h3>El Matrimonio en su Contexto: Efesios 5:18-33</h3>
             <p>4 sesiones con preguntas para conversar en pareja, el texto griego explicado y un reto de 7 días.</p>
           </div>
@@ -146,9 +146,10 @@
         <p>Al confirmar tu suscripción empieza una breve serie de bienvenida.</p>
       </div>
       <ol class="timeline">
-        <li><div class="when">Hoy</div><div><strong>Bienvenida + tus 2 regalos</strong><span>Los enlaces para descargar el glosario y la guía de estudio, y por dónde empezar en el canal.</span></div></li>
+        <li><div class="when">Hoy</div><div><strong>Bienvenida + tu primer regalo</strong><span>El glosario de 10 palabras hebreas y griegas, y por dónde empezar en el canal.</span></div></li>
         <li><div class="when">Día 3</div><div><strong>El Padre que corrió</strong><span>Un detalle cultural de Lucas 15 que transforma la parábola del hijo pródigo.</span></div></li>
-        <li><div class="when">Día 7</div><div><strong>Tu pregunta</strong><span>Cuéntanos qué pasaje quieres ver explicado en un próximo episodio.</span></div></li>
+        <li><div class="when">Día 7</div><div><strong>Tu segundo regalo</strong><span>La guía de estudio El Matrimonio en su Contexto, para estudiar junto al episodio.</span></div></li>
+        <li><div class="when">Día 10</div><div><strong>Tu pregunta</strong><span>Cuéntanos qué pasaje quieres ver explicado en un próximo episodio.</span></div></li>
         <li><div class="when">Después</div><div><strong>Nuevos estudios</strong><span>Episodios, curiosidades bíblicas y recursos a medida que se publican.</span></div></li>
       </ol>
     </div>
@@ -196,6 +197,14 @@ document.getElementById('cta-bottom').addEventListener('click', () => {
   setTimeout(() => document.getElementById('email').focus({ preventScroll: true }), 450);
 });
 
+// Visitantes que llegan desde el video (?regalo=guia): la guía es el regalo principal
+const fromVideo = new URLSearchParams(location.search).get('regalo') === 'guia';
+if (fromVideo) {
+  document.getElementById('form-title').textContent = 'Descarga gratis la guía de estudio';
+  document.getElementById('form-hint').innerHTML = 'La guía de <b>El Matrimonio en su Contexto</b> (Efesios 5:18-33): 4 sesiones para estudiar en pareja. Confirma tu correo y descárgala al instante. Además recibirás el <b>glosario de 10 palabras hebreas y griegas</b>.';
+  document.getElementById('success-gift').textContent = 'Al confirmar, podrás descargar la guía de estudio y el glosario.';
+}
+
 const form = document.getElementById('signup-form');
 const msg = document.getElementById('form-msg');
 const btn = document.getElementById('submit-btn');
@@ -221,6 +230,7 @@ form.addEventListener('submit', async (e) => {
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({
         action: 'subscribe',
+        source: fromVideo ? 'guia' : '',
         name: form.name.value.trim(),
         email,
         interest: form.interest.value,

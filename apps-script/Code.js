@@ -25,14 +25,15 @@ const SEQ = 'Bienvenida';
 const MSG = 'Mensajes';
 const HELP = 'Cómo usar';
 
-const SUB_HEADERS = ['Correo', 'Nombre', 'Interés', 'Estado', 'Creado', 'Confirmado', 'Baja', 'Correos enviados', 'Token'];
-const S = { email: 1, name: 2, interest: 3, status: 4, created: 5, confirmed: 6, unsub: 7, sent: 8, token: 9 };
+const SUB_HEADERS = ['Correo', 'Nombre', 'Interés', 'Estado', 'Creado', 'Confirmado', 'Baja', 'Correos enviados', 'Token', 'Fuente'];
+const S = { email: 1, name: 2, interest: 3, status: 4, created: 5, confirmed: 6, unsub: 7, sent: 8, token: 9, source: 10 };
 
 const SEQ_HEADERS = ['ID', 'Día', 'Asunto', 'Vista previa', 'Mensaje', 'Texto del botón', 'Enlace del botón', 'Activo'];
 
 const MSG_HEADERS = ['Asunto', 'Vista previa', 'Mensaje', 'Texto del botón', 'Enlace del botón', 'Enviar prueba a', '¿Enviar a todos?', 'Estado', 'Enviados', 'ID', 'Iniciado'];
 const M = { subject: 1, preheader: 2, body: 3, ctaText: 4, ctaUrl: 5, testTo: 6, go: 7, status: 8, count: 9, id: 10, started: 11 };
 
+const SOURCE_GUIDE = 'Video (guía)';
 const ACTIVE = 'Activo', PENDING = 'Pendiente', UNSUB = 'Baja';
 const EMAIL_RE = /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[^\s@<>()",;:]{2,}$/;
 const INTERESTS = { todo: 'Un poco de todo', historia: 'Contexto histórico', idiomas: 'Hebreo y griego', aplicacion: 'Aplicación', familia: 'Matrimonio y familia' };
@@ -82,6 +83,7 @@ function subscribe_(d) {
   const email = String(d.email || '').trim().toLowerCase();
   const name = clean_(d.name, 80);
   const interest = INTERESTS[d.interest] ? d.interest : 'todo';
+  const source = d.source === 'guia' ? SOURCE_GUIDE : 'Página';
   if (!EMAIL_RE.test(email) || email.length > 254) return { ok: false, error: 'Escribe un correo electrónico válido.' };
   if (!d.consent) return { ok: false, error: 'Debes aceptar recibir correos para suscribirte.' };
 
@@ -101,7 +103,7 @@ function subscribe_(d) {
     const now = new Date();
     if (!row) {
       token = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 16);
-      sheet.appendRow([email, name, INTERESTS[interest], PENDING, now, '', '', '', token]);
+      sheet.appendRow([email, name, INTERESTS[interest], PENDING, now, '', '', '', token, source]);
       row = sheet.getLastRow();
       status = PENDING;
     } else {
@@ -162,7 +164,7 @@ function confirm_(token) {
     const steps = steps_().filter(function (s) { return s.day <= 0; });
     steps.forEach(function (s) { deliver_(sheet, row, sub.email, s.id, s); });
   } catch (err) { console.error(err); }
-  return { ok: true, status: 'active', youtube: CONFIG.YOUTUBE_URL };
+  return { ok: true, status: 'active', guide: sub.source === SOURCE_GUIDE, youtube: CONFIG.YOUTUBE_URL };
 }
 
 function unsubscribe_(token, commit) {
@@ -190,17 +192,37 @@ function unsubscribe_(token, commit) {
 function migrate_() {
   const props = PropertiesService.getScriptProperties();
   const version = Number(props.getProperty('CONTENT_VERSION') || 1);
-  if (version >= 2) return;
+  if (version >= 3) return;
+  const norm = function (x) { return String(x || '').replace(/\s+/g, ' ').trim(); };
+  const byId = {};
+  DEFAULT_SEQUENCE.forEach(function (d) { byId[d.id] = d; });
+
   const seq = sheet_(SEQ);
-  const v = seq.getDataRange().getValues();
-  const norm = function (s) { return String(s || '').replace(/\s+/g, ' ').trim(); };
-  const welcome = DEFAULT_SEQUENCE[0];
+  let v = seq.getDataRange().getValues();
+  let hasGuide = false, afterRow = v.length;
   for (let r = 1; r < v.length; r++) {
-    if (String(v[r][0]).trim() === 'bienvenida' && norm(v[r][4]) === norm(LEGACY_WELCOME_BODY)) {
-      seq.getRange(r + 1, 3, 1, 3).setValues([[welcome.subject, welcome.preheader, welcome.body.trim()]]);
+    const id = String(v[r][0]).trim(), row = r + 1;
+    if (id === 'bienvenida' && [LEGACY_WELCOME_BODY, WELCOME_V2_BODY].map(norm).indexOf(norm(v[r][4])) !== -1) {
+      const w = byId.bienvenida;
+      seq.getRange(row, 3, 1, 3).setValues([[w.subject, w.preheader, w.body.trim()]]);
     }
+    if (id === 'tu-pregunta') {
+      if (Number(v[r][1]) === 7) seq.getRange(row, 2).setValue(10);
+      if (norm(v[r][4]) === norm(QUESTION_V1_BODY)) seq.getRange(row, 5).setValue(byId['tu-pregunta'].body.trim());
+    }
+    if (id === 'padre-que-corrio') afterRow = row;
+    if (id === 'guia-matrimonio') hasGuide = true;
   }
-  props.setProperty('CONTENT_VERSION', '2');
+  if (!hasGuide) {
+    const g = byId['guia-matrimonio'];
+    seq.insertRowAfter(afterRow);
+    seq.getRange(afterRow + 1, 1, 1, SEQ_HEADERS.length).setValues([[g.id, g.day, g.subject, g.preheader, g.body.trim(), g.ctaText, g.ctaUrl, true]]);
+    seq.getRange(afterRow + 1, 8).insertCheckboxes().setValue(true);
+  }
+
+  const subs = sheet_(SUBS);
+  subs.getRange(1, 1, 1, SUB_HEADERS.length).setValues([SUB_HEADERS]).setFontWeight('bold').setBackground('#0a2560').setFontColor('#ffffff');
+  props.setProperty('CONTENT_VERSION', '3');
 }
 
 function tick() {
@@ -314,7 +336,7 @@ function setup() {
     props.setProperty('SPREADSHEET_ID', ss.getId());
   }
 
-  const subs = ensureSheet_(ss, SUBS, SUB_HEADERS, [220, 140, 160, 90, 140, 140, 140, 260, 120]);
+  const subs = ensureSheet_(ss, SUBS, SUB_HEADERS, [220, 140, 160, 90, 140, 140, 140, 260, 120, 120]);
   subs.hideColumns(S.token);
 
   const seq = ensureSheet_(ss, SEQ, SEQ_HEADERS, [140, 50, 300, 260, 480, 170, 260, 70]);
@@ -384,6 +406,7 @@ function rowToSub_(v) {
     confirmed: v[S.confirmed - 1],
     sent: String(v[S.sent - 1] || ''),
     token: String(v[S.token - 1] || ''),
+    source: String(v[S.source - 1] || ''),
   };
 }
 
@@ -509,15 +532,16 @@ function renderEmail_(o) {
 const DEFAULT_SEQUENCE = [
   {
     id: 'bienvenida', day: 0,
-    subject: '¡Bienvenido(a)! Aquí están tus 2 regalos',
-    preheader: 'Descarga el glosario y la guía de estudio.',
+    subject: '¡Bienvenido(a)! Aquí está tu primer regalo',
+    preheader: 'Descarga el glosario de 10 palabras hebreas y griegas.',
     body: `
 Hola {{nombre}},
 
-¡Gracias por confirmar tu suscripción! Me alegra mucho que quieras estudiar las Escrituras con más profundidad. Como te prometimos, aquí están tus **2 regalos de bienvenida**:
+¡Gracias por confirmar tu suscripción! Me alegra mucho que quieras estudiar las Escrituras con más profundidad. Como te prometimos, aquí está tu **primer regalo**:
 
 - [**Glosario: 10 palabras hebreas y griegas que todo creyente debe conocer**]({{SITE_URL}}/recursos/10_palabras_hebreas_y_griegas.pdf) (PDF, 1 página)
-- [**Guía de estudio: El Matrimonio en su Contexto**]({{SITE_URL}}/recursos/Guia_El_Matrimonio_en_su_Contexto.pdf) (PDF, 8 páginas, ideal para estudiar en pareja)
+
+Tómate unos días para disfrutarlo. **En tu primera semana te enviaré el segundo regalo**: la guía de estudio *El Matrimonio en su Contexto*, ideal para estudiar en pareja.
 
 En este boletín recibirás:
 
@@ -553,13 +577,31 @@ Esto es lo que buscamos en cada estudio: leer el texto como lo escucharon sus pr
     ctaText: 'Ver más estudios', ctaUrl: '{{YOUTUBE_URL}}',
   },
   {
-    id: 'tu-pregunta', day: 7,
+    id: 'guia-matrimonio', day: 7,
+    subject: 'Tu segundo regalo: la guía El Matrimonio en su Contexto',
+    preheader: '4 sesiones para estudiar Efesios 5 en pareja.',
+    body: `
+Hola {{nombre}},
+
+Como te prometí, aquí tienes tu segundo regalo:
+
+- [**Descargar la guía: El Matrimonio en su Contexto**]({{SITE_URL}}/recursos/Guia_El_Matrimonio_en_su_Contexto.pdf) (PDF, 8 páginas)
+
+Son **4 sesiones cortas** sobre Efesios 5:18-33: el versículo que casi nadie lee, el verbo que falta en el griego del versículo 22, lo radical que fue Pablo en el siglo primero y la palabra *thálpō*, que significa "dar calor". Cada sesión trae preguntas para conversar en pareja y un paso práctico. Al final hay un reto de 7 días.
+
+**Funciona mejor junto al episodio.** Mírenlo juntos y luego abran la guía.
+
+Y si el episodio te ayudó, me encantaría leerte en los comentarios del video: **¿qué versículo has escuchado usar como arma en una discusión?** Los más comentados los explicaremos en próximos episodios.`,
+    ctaText: 'Ver el episodio en YouTube', ctaUrl: '{{YOUTUBE_URL}}',
+  },
+  {
+    id: 'tu-pregunta', day: 10,
     subject: '{{nombre}}, ¿qué pasaje te gustaría entender mejor?',
     preheader: 'Responde este correo con tu pregunta.',
     body: `
 Hola {{nombre}},
 
-Ya llevas una semana en el boletín y quiero hacerte una pregunta sencilla:
+Ya llevas más de una semana en el boletín y quiero hacerte una pregunta sencilla:
 
 **¿Qué pasaje, personaje o tema bíblico te gustaría ver explicado en su contexto?**
 
@@ -568,6 +610,36 @@ Puede ser un versículo difícil, una costumbre que no entiendes o una palabra q
 Gracias por ser parte de esta comunidad que ama la Palabra.`,
   },
 ];
+
+// Textos anteriores (v2), para saber si el dueño los editó antes de actualizarlos.
+const WELCOME_V2_BODY = `Hola {{nombre}},
+
+¡Gracias por confirmar tu suscripción! Me alegra mucho que quieras estudiar las Escrituras con más profundidad. Como te prometimos, aquí están tus **2 regalos de bienvenida**:
+
+- [**Glosario: 10 palabras hebreas y griegas que todo creyente debe conocer**]({{SITE_URL}}/recursos/10_palabras_hebreas_y_griegas.pdf) (PDF, 1 página)
+- [**Guía de estudio: El Matrimonio en su Contexto**]({{SITE_URL}}/recursos/Guia_El_Matrimonio_en_su_Contexto.pdf) (PDF, 8 páginas, ideal para estudiar en pareja)
+
+En este boletín recibirás:
+
+- **Estudios en contexto:** el trasfondo histórico y cultural que ilumina cada pasaje.
+- **Palabras clave** del hebreo y el griego explicadas de forma sencilla.
+- **Nuevos episodios y curiosidades bíblicas** en cuanto se publiquen.
+
+Nuestro lema sale de las palabras de Jesús:
+
+> "Escudriñad las Escrituras; porque a vosotros os parece que en ellas tenéis la vida eterna; y ellas son las que dan testimonio de mí." (Juan 5:39)
+
+Un buen lugar para empezar es el canal, donde están todos los episodios.`;
+
+const QUESTION_V1_BODY = `Hola {{nombre}},
+
+Ya llevas una semana en el boletín y quiero hacerte una pregunta sencilla:
+
+**¿Qué pasaje, personaje o tema bíblico te gustaría ver explicado en su contexto?**
+
+Puede ser un versículo difícil, una costumbre que no entiendes o una palabra que te intriga. **Solo responde a este correo**: leo cada mensaje, y muchas de estas preguntas se convierten en futuros episodios.
+
+Gracias por ser parte de esta comunidad que ama la Palabra.`;
 
 // Texto original del correo de bienvenida (versión 1), para saber si el dueño lo editó.
 const LEGACY_WELCOME_BODY = `Hola {{nombre}},

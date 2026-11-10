@@ -19,7 +19,7 @@
   <div id="cta" hidden>
     <div class="downloads">
       <a class="btn" href="recursos/10_palabras_hebreas_y_griegas.pdf" download>⬇ Glosario: 10 palabras hebreas y griegas</a>
-      <a class="btn" href="recursos/Guia_El_Matrimonio_en_su_Contexto.pdf" download>⬇ Guía: El Matrimonio en su Contexto</a>
+      <a class="btn" id="dl-guide" hidden href="recursos/Guia_El_Matrimonio_en_su_Contexto.pdf" download>⬇ Guía: El Matrimonio en su Contexto</a>
     </div>
     <p><a class="btn secondary" href="https://www.youtube.com/@labibliaensucontexto401" target="_blank" rel="noopener">Ver el canal en YouTube</a></p>
   </div>
@@ -36,7 +36,12 @@
     const d = await res.json();
     if (!d.ok) return set('Enlace no válido', d.error || 'Este enlace no es válido o ya expiró.');
     if (d.status === 'unsubscribed') return set('Suscripción cancelada', 'Te diste de baja de este boletín. Puedes volver a suscribirte desde la <a href="./">página principal</a>.');
-    set('¡Suscripción confirmada!', 'Bienvenido(a) a <em>La Biblia en su Contexto</em>. Aquí tienes tus 2 regalos. También te enviamos los enlaces por correo.');
+    if (d.guide) {
+      document.getElementById('dl-guide').hidden = false;
+      set('¡Suscripción confirmada!', 'Bienvenido(a) a <em>La Biblia en su Contexto</em>. Aquí tienes la guía de estudio y el glosario. También te enviamos el glosario por correo.');
+    } else {
+      set('¡Suscripción confirmada!', 'Bienvenido(a) a <em>La Biblia en su Contexto</em>. Aquí tienes tu primer regalo. El segundo, la guía de estudio <em>El Matrimonio en su Contexto</em>, te llegará por correo en tu primera semana.');
+    }
     document.getElementById('cta').hidden = false;
   } catch {
     set('Sin conexión', 'No pudimos confirmar ahora. Vuelve a abrir el enlace del correo en un momento.');
