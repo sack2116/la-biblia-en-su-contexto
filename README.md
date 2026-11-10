@@ -25,4 +25,4 @@ A free Gmail account sends about **100 emails per day**. If a broadcast needs mo
 
 - Page text: edit `docs/index.html`, then commit and push. GitHub Pages updates in about a minute.
 - Email texts: edit them directly in the Google Sheet. No code is needed.
-- Backend code: edit `apps-script/Code.js`, then run `npx clasp push` and `npx clasp deploy -i <deploymentId>`.
+- Backend code: edit `apps-script/Code.js`, then run `npx clasp push` and `npx clasp update-deployment AKfycbwijgqCl3wo2M2SMbaLzSaVbK9IPJJ1lzzr0NggB6MC0PkOvI6o-OuADXNRbhp7lUy0ZA`.
