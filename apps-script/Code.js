@@ -158,6 +158,7 @@ function confirm_(token) {
   }
   // Correos del día 0 al instante (no esperar al activador)
   try {
+    migrate_();
     const steps = steps_().filter(function (s) { return s.day <= 0; });
     steps.forEach(function (s) { deliver_(sheet, row, sub.email, s.id, s); });
   } catch (err) { console.error(err); }
@@ -182,7 +183,28 @@ function unsubscribe_(token, commit) {
 // Activador: secuencia + mensajes a todos
 // =====================================================================
 
+/**
+ * Actualiza contenido ya guardado en la hoja cuando cambia el contenido por defecto.
+ * Solo reemplaza filas que el dueño no ha editado.
+ */
+function migrate_() {
+  const props = PropertiesService.getScriptProperties();
+  const version = Number(props.getProperty('CONTENT_VERSION') || 1);
+  if (version >= 2) return;
+  const seq = sheet_(SEQ);
+  const v = seq.getDataRange().getValues();
+  const norm = function (s) { return String(s || '').replace(/\s+/g, ' ').trim(); };
+  const welcome = DEFAULT_SEQUENCE[0];
+  for (let r = 1; r < v.length; r++) {
+    if (String(v[r][0]).trim() === 'bienvenida' && norm(v[r][4]) === norm(LEGACY_WELCOME_BODY)) {
+      seq.getRange(r + 1, 3, 1, 3).setValues([[welcome.subject, welcome.preheader, welcome.body.trim()]]);
+    }
+  }
+  props.setProperty('CONTENT_VERSION', '2');
+}
+
 function tick() {
+  try { migrate_(); } catch (err) { console.error('migrate_: ' + err); }
   const started = Date.now();
   const outOfTime = function () { return Date.now() - started > CONFIG.MAX_RUN_MS; };
   const outOfQuota = function () { return MailApp.getRemainingDailyQuota() <= CONFIG.RESERVE_QUOTA; };
@@ -487,12 +509,15 @@ function renderEmail_(o) {
 const DEFAULT_SEQUENCE = [
   {
     id: 'bienvenida', day: 0,
-    subject: '¡Bienvenido(a) a La Biblia en su Contexto!',
-    preheader: 'Qué esperar del boletín y por dónde empezar.',
+    subject: '¡Bienvenido(a)! Aquí están tus 2 regalos',
+    preheader: 'Descarga el glosario y la guía de estudio.',
     body: `
 Hola {{nombre}},
 
-¡Gracias por confirmar tu suscripción! Me alegra mucho que quieras estudiar las Escrituras con más profundidad.
+¡Gracias por confirmar tu suscripción! Me alegra mucho que quieras estudiar las Escrituras con más profundidad. Como te prometimos, aquí están tus **2 regalos de bienvenida**:
+
+- [**Glosario: 10 palabras hebreas y griegas que todo creyente debe conocer**]({{SITE_URL}}/recursos/10_palabras_hebreas_y_griegas.pdf) (PDF, 1 página)
+- [**Guía de estudio: El Matrimonio en su Contexto**]({{SITE_URL}}/recursos/Guia_El_Matrimonio_en_su_Contexto.pdf) (PDF, 8 páginas, ideal para estudiar en pareja)
 
 En este boletín recibirás:
 
@@ -543,6 +568,23 @@ Puede ser un versículo difícil, una costumbre que no entiendes o una palabra q
 Gracias por ser parte de esta comunidad que ama la Palabra.`,
   },
 ];
+
+// Texto original del correo de bienvenida (versión 1), para saber si el dueño lo editó.
+const LEGACY_WELCOME_BODY = `Hola {{nombre}},
+
+¡Gracias por confirmar tu suscripción! Me alegra mucho que quieras estudiar las Escrituras con más profundidad.
+
+En este boletín recibirás:
+
+- **Estudios en contexto:** el trasfondo histórico y cultural que ilumina cada pasaje.
+- **Palabras clave** del hebreo y el griego explicadas de forma sencilla.
+- **Nuevos episodios y curiosidades bíblicas** en cuanto se publiquen.
+
+Nuestro lema sale de las palabras de Jesús:
+
+> "Escudriñad las Escrituras; porque a vosotros os parece que en ellas tenéis la vida eterna; y ellas son las que dan testimonio de mí." (Juan 5:39)
+
+Un buen lugar para empezar es el canal, donde están todos los episodios.`;
 
 const HELP_TEXT = [
   'Cómo usar el boletín',

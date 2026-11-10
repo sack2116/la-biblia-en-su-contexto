@@ -25,7 +25,7 @@
 
     <div class="hero-grid">
       <div>
-        <span class="eyebrow">Boletín gratuito</span>
+        <span class="eyebrow">Boletín gratuito + 2 regalos</span>
         <h1>La Biblia<small>en su Contexto</small></h1>
         <div class="divider">✦</div>
         <p class="lead">El sentido de la Escritura, directo en tu correo.</p>
@@ -37,8 +37,8 @@
 
       <div class="signup" id="suscribirse">
         <div id="form-view">
-          <h2>Únete al boletín</h2>
-          <p class="hint">Nuevos estudios, episodios y recursos. Sin spam: te das de baja con un clic.</p>
+          <h2>Recibe 2 regalos gratis</h2>
+          <p class="hint">Suscríbete al boletín y descarga el <b>glosario de 10 palabras hebreas y griegas</b> y la <b>guía de estudio de El Matrimonio en su Contexto</b>. Sin spam: te das de baja con un clic.</p>
           <form id="signup-form" novalidate>
             <div class="field">
               <label for="name">Nombre</label>
@@ -66,7 +66,7 @@
               <input type="checkbox" id="consent" name="consent" required>
               <span>Acepto recibir correos de La Biblia en su Contexto. Puedo darme de baja en cualquier momento.</span>
             </label>
-            <button class="btn" type="submit" id="submit-btn">Quiero suscribirme</button>
+            <button class="btn" type="submit" id="submit-btn">Quiero mis regalos</button>
             <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
           </form>
         </div>
@@ -75,6 +75,7 @@
           <div class="seal">✉</div>
           <h2>¡Revisa tu correo!</h2>
           <p id="success-text">Te enviamos un enlace para confirmar tu suscripción.</p>
+          <p>Al confirmar, podrás descargar tus 2 regalos.</p>
           <p class="privacy">¿No lo ves? Busca en Spam o Promociones.</p>
         </div>
       </div>
@@ -83,6 +84,35 @@
 </header>
 
 <main>
+  <section class="gifts">
+    <div class="wrap">
+      <div class="section-title">
+        <span class="eyebrow">Gratis al suscribirte</span>
+        <h2>Tus regalos de bienvenida</h2>
+        <p>Dos recursos en PDF para estudiar, imprimir o compartir con tu grupo.</p>
+      </div>
+      <div class="gift-grid">
+        <article class="gift">
+          <img src="recursos/portada_glosario.jpg" alt="Portada del glosario de 10 palabras hebreas y griegas" loading="lazy">
+          <div>
+            <span class="tag">Glosario · 1 página</span>
+            <h3>10 palabras hebreas y griegas que todo creyente debe conocer</h3>
+            <p>Jésed, shalóm, agápe, metánoia y más: su sentido original, cómo se pronuncian y dónde leerlas.</p>
+          </div>
+        </article>
+        <article class="gift">
+          <img src="recursos/portada_guia.jpg" alt="Portada de la guía de estudio El Matrimonio en su Contexto" loading="lazy">
+          <div>
+            <span class="tag">Guía de estudio · 8 páginas</span>
+            <h3>El Matrimonio en su Contexto: Efesios 5:18-33</h3>
+            <p>4 sesiones con preguntas para conversar en pareja, el texto griego explicado y un reto de 7 días.</p>
+          </div>
+        </article>
+      </div>
+      <p class="gift-cta"><a class="btn" href="#suscribirse">Quiero mis regalos</a></p>
+    </div>
+  </section>
+
   <section class="features">
     <div class="wrap">
       <div class="section-title">
@@ -116,7 +146,7 @@
         <p>Al confirmar tu suscripción empieza una breve serie de bienvenida.</p>
       </div>
       <ol class="timeline">
-        <li><div class="when">Hoy</div><div><strong>Bienvenida</strong><span>Qué esperar del boletín y por dónde empezar en el canal.</span></div></li>
+        <li><div class="when">Hoy</div><div><strong>Bienvenida + tus 2 regalos</strong><span>Los enlaces para descargar el glosario y la guía de estudio, y por dónde empezar en el canal.</span></div></li>
         <li><div class="when">Día 3</div><div><strong>El Padre que corrió</strong><span>Un detalle cultural de Lucas 15 que transforma la parábola del hijo pródigo.</span></div></li>
         <li><div class="when">Día 7</div><div><strong>Tu pregunta</strong><span>Cuéntanos qué pasaje quieres ver explicado en un próximo episodio.</span></div></li>
         <li><div class="when">Después</div><div><strong>Nuevos estudios</strong><span>Episodios, curiosidades bíblicas y recursos a medida que se publican.</span></div></li>
@@ -146,8 +176,8 @@
   <section class="cta-final">
     <div class="wrap">
       <h2>Lee la Biblia como fue escrita</h2>
-      <p>Únete gratis y recibe el próximo estudio en tu correo.</p>
-      <a class="btn" href="#suscribirse" id="cta-bottom">Suscribirme al boletín</a>
+      <p>Únete gratis, descarga tus 2 regalos y recibe el próximo estudio en tu correo.</p>
+      <a class="btn" href="#suscribirse" id="cta-bottom">Quiero mis regalos</a>
     </div>
   </section>
 </main>
@@ -207,7 +237,7 @@ form.addEventListener('submit', async (e) => {
     showError(err.message === 'Failed to fetch' ? 'Sin conexión. Inténtalo de nuevo.' : err.message);
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Quiero suscribirme';
+    btn.textContent = 'Quiero mis regalos';
   }
 });
 </script>

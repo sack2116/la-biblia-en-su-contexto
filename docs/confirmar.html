@@ -16,7 +16,13 @@
   <img src="logo.png" alt="">
   <h1 id="title">Confirmando…</h1>
   <p id="text">Un momento, por favor.</p>
-  <p id="cta" hidden><a class="btn" href="https://www.youtube.com/@labibliaensucontexto401" target="_blank" rel="noopener">Ver el canal en YouTube</a></p>
+  <div id="cta" hidden>
+    <div class="downloads">
+      <a class="btn" href="recursos/10_palabras_hebreas_y_griegas.pdf" download>⬇ Glosario: 10 palabras hebreas y griegas</a>
+      <a class="btn" href="recursos/Guia_El_Matrimonio_en_su_Contexto.pdf" download>⬇ Guía: El Matrimonio en su Contexto</a>
+    </div>
+    <p><a class="btn secondary" href="https://www.youtube.com/@labibliaensucontexto401" target="_blank" rel="noopener">Ver el canal en YouTube</a></p>
+  </div>
   <p style="margin-top:24px"><a href="./">Volver al inicio</a></p>
 </div></main>
 <script src="config.js"></script>
@@ -30,7 +36,7 @@
     const d = await res.json();
     if (!d.ok) return set('Enlace no válido', d.error || 'Este enlace no es válido o ya expiró.');
     if (d.status === 'unsubscribed') return set('Suscripción cancelada', 'Te diste de baja de este boletín. Puedes volver a suscribirte desde la <a href="./">página principal</a>.');
-    set('¡Suscripción confirmada!', 'Bienvenido(a) a <em>La Biblia en su Contexto</em>. Ya te enviamos el primer correo.');
+    set('¡Suscripción confirmada!', 'Bienvenido(a) a <em>La Biblia en su Contexto</em>. Aquí tienes tus 2 regalos. También te enviamos los enlaces por correo.');
     document.getElementById('cta').hidden = false;
   } catch {
     set('Sin conexión', 'No pudimos confirmar ahora. Vuelve a abrir el enlace del correo en un momento.');
